@@ -1,0 +1,5 @@
+package piateam.footballclubs.business.constant;
+
+public class Messages {
+
+}

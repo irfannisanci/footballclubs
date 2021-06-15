@@ -1,0 +1,78 @@
+package piateam.footballclubs.business.concretes;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import piateam.footballclubs.business.abstracts.FootballerService;
+import piateam.footballclubs.core.utilities.results.DataResult;
+import piateam.footballclubs.core.utilities.results.ErrorResult;
+import piateam.footballclubs.core.utilities.results.Result;
+import piateam.footballclubs.core.utilities.results.SuccessDataResult;
+import piateam.footballclubs.core.utilities.results.SuccessResult;
+import piateam.footballclubs.dataAccess.abstracts.FootballerDao;
+import piateam.footballclubs.entities.concretes.Footballer;
+import piateam.footballclubs.entities.dtos.FootballerDto;
+import piateam.footballclubs.entities.dtos.FootballerInputDto;
+
+@Service
+public class FootballerManager implements FootballerService{
+
+	
+	FootballerDao footballerDao;
+	ModelMapper modelMapper;
+	@Autowired
+	public FootballerManager(FootballerDao footballerDao, ModelMapper modelMapper) {
+		super();
+		this.footballerDao = footballerDao;
+		this.modelMapper=modelMapper;
+	}
+	
+		
+
+	@Override
+	public DataResult<List<FootballerDto>> getAll() {
+		return new SuccessDataResult<List<FootballerDto>>(this.footballerDao.findAll().stream().map(element->modelMapper.map(element, FootballerDto.class)).collect(Collectors.toList()),"Futbolcular Listelendi.");
+	}
+
+	
+	@Override
+	public Result add(FootballerInputDto footballerDto) {
+		Footballer footballer=modelMapper.map(footballerDto, Footballer.class);
+		if (this.footballerDao.countByFootballTeam_Id(footballer.getFootballTeam().getId())!=18) {
+			if (footballer.getNationality().getId()==2 && this.footballerDao.countByFootballTeamIdAndNationality_Id(footballer.getFootballTeam().getId(),2)==6) return new ErrorResult("Bir takımda 6 dan fazla yabancı oyuncu olamaz.");
+			if (footballer.getPosition().getId()==1 && this.footballerDao.countByFootballTeamIdAndPosition_Id(footballer.getFootballTeam().getId(),1)==2) return new ErrorResult("Bir takımda 2 den fazla kaleci olamaz.");
+			this.footballerDao.save(footballer);
+			return new SuccessResult("Futbolcu eklendi.");
+		}
+		
+		return new ErrorResult("Bir takımda 18 den fazla oyuncu olamaz.");
+	}
+
+	@Override
+	public Result delete(Footballer footballer) {
+		this.footballerDao.delete(footballer);
+		return new SuccessResult("Seçilen futbolcu silindi.");
+	}
+
+	@Override
+	public Result update(Footballer footballer) {
+		Footballer newFootballer=this.footballerDao.getById(footballer.getId());
+		newFootballer.setFirstName(footballer.getFirstName());
+		newFootballer.setLastName(footballer.getLastName());
+		newFootballer.setUniformNumber(footballer.getUniformNumber());
+		newFootballer.getFootballTeam().setId(footballer.getFootballTeam().getId());
+		newFootballer.getNationality().setId(footballer.getNationality().getId());
+		newFootballer.getPosition().setId(footballer.getPosition().getId());
+		this.footballerDao.save(newFootballer);
+		return new SuccessResult("Futbolcu bilgileri güncellendi");
+	}
+
+	@Override
+	public DataResult<List<FootballerDto>> getByFootballTeamId(int id) {
+		return new SuccessDataResult<List<FootballerDto>>(this.footballerDao.getByFootballTeamId(id).stream().map(element->modelMapper.map(element, FootballerDto.class)).collect(Collectors.toList()),"Seçilen takıma ait futbolcular listelendi.");
+	}
+}

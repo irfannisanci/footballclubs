@@ -1,0 +1,32 @@
+package piateam.footballclubs.business.concretes;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import piateam.footballclubs.business.abstracts.FootballTeamService;
+import piateam.footballclubs.dataAccess.abstracts.FootballTeamDao;
+import piateam.footballclubs.entities.concretes.FootballTeam;
+
+@Service
+public class FootballTeamManager implements FootballTeamService{
+	
+	private FootballTeamDao footballTeamDao;
+	@Autowired
+	public FootballTeamManager(FootballTeamDao footballTeamDao) {
+		super();
+		this.footballTeamDao = footballTeamDao;
+	}
+
+	@Override
+	public List<FootballTeam> getAll() {
+		return this.footballTeamDao.findAll();
+	}
+
+	@Override
+	public FootballTeam add(FootballTeam footballTeam) {
+		return this.footballTeamDao.save(footballTeam);
+	}
+	
+}

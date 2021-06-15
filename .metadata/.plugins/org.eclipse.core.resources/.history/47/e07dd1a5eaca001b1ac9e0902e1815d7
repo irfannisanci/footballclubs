@@ -1,0 +1,6 @@
+package piateam.footballclubs.business.constant;
+
+public class Messages {
+	public static String footballerCount="Bir takımda 6 dan fazla yabancı oyuncu olamaz.";
+	public static String goalKeeperCount="Bir takımda 2 den fazla kaleci olamaz.";
+}

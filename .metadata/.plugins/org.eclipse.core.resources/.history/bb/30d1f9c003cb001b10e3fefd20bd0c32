@@ -1,0 +1,10 @@
+package piateam.footballclubs.entities.dtos;
+
+public class FootballTeamUpdateDto {
+
+	private int id;
+	private String clubName;
+	private String teamLogoUrl;
+	private String teamFoundingYear;
+	private String teamColor;
+}
