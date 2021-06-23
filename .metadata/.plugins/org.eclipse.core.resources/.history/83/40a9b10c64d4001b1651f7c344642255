@@ -76,6 +76,6 @@ public class FootballerManager implements FootballerService{
 			return new SuccessResult(Messages.updateFootballer);
 		}
 		
-		return new ErrorResult(Messages.footballerCount);
+		return new SuccessResult(Messages.updateFootballer);
 	}
 }
