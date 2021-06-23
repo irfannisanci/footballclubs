@@ -68,7 +68,14 @@ public class FootballerManager implements FootballerService{
 		newFootballer.getFootballTeam().setId(footballerInputDto.getFootballTeamId());
 		newFootballer.getNationality().setId(footballerInputDto.getNationalityId());
 		newFootballer.getPosition().setId(footballerInputDto.getPositionId());
-		this.footballerDao.save(newFootballer);
+		
+		if (this.footballerDao.countByFootballTeam_Id(newFootballer.getFootballTeam().getId())!=18) {
+			if (newFootballer.getNationality().getId()==2 && this.footballerDao.countByFootballTeamIdAndNationality_Id(newFootballer.getFootballTeam().getId(),2)==6) return new ErrorResult(Messages.nationalityCount);//nationalityid=2->yabancı uyruk
+			if (newFootballer.getPosition().getId()==1 && this.footballerDao.countByFootballTeamIdAndPosition_Id(newFootballer.getFootballTeam().getId(),1)==2) return new ErrorResult(Messages.goalKeeperCount);//positionid=1->Kaleci 
+			this.footballerDao.save(newFootballer);
+			return new SuccessResult(Messages.updateFootballer);
+		}
+		
 		return new SuccessResult(Messages.updateFootballer);
 	}
 }

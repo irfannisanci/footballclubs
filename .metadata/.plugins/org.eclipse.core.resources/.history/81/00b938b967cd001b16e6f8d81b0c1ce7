@@ -1,5 +1,0 @@
-package piateam.footballclubs.entities.dtos;
-
-public class FootballTeamDetailDto {
-
-}
